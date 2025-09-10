@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tes Kepribadian Temperamen</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        .gradient-bg { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .card-shadow { box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+        .progress-bar { transition: width 0.3s ease; }
+        .fade-in { animation: fadeIn 0.5s ease-in; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body class="gradient-bg min-h-screen">
+    <div class="container mx-auto px-4 py-8 max-w-4xl">
+        <!-- Header -->
+        <div class="text-center mb-8 fade-in">
+            <h1 class="text-4xl font-bold text-white mb-4">🧠 Tes Kepribadian Temperamen</h1>
+            <p class="text-white/90 text-lg">Temukan tipe kepribadian Anda: Melankolis, Plegmatis, Sanguinis, atau Koleris</p>
+        </div>
+
+        <!-- Welcome Screen -->
+        <div id="welcomeScreen" class="bg-white rounded-2xl card-shadow p-8 text-center fade-in">
+            <div class="mb-6">
+                <div class="text-6xl mb-4">🎭</div>
+                <h2 class="text-3xl font-bold text-gray-800 mb-4">Selamat Datang!</h2>
+                <p class="text-gray-600 text-lg mb-6">Tes ini terdiri dari 50 pertanyaan yang akan membantu menentukan tipe temperamen kepribadian Anda. Jawablah dengan jujur sesuai dengan perasaan dan perilaku Anda yang sebenarnya.</p>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+                    <div class="bg-red-50 p-4 rounded-lg">
+                        <div class="text-2xl mb-2">🔥</div>
+                        <div class="font-semibold text-red-700">Koleris</div>
+                        <div class="text-sm text-red-600">Pemimpin</div>
+                    </div>
+                    <div class="bg-yellow-50 p-4 rounded-lg">
+                        <div class="text-2xl mb-2">☀️</div>
+                        <div class="font-semibold text-yellow-700">Sanguinis</div>
+                        <div class="text-sm text-yellow-600">Populer</div>
+                    </div>
+                    <div class="bg-blue-50 p-4 rounded-lg">
+                        <div class="text-2xl mb-2">🌊</div>
+                        <div class="font-semibold text-blue-700">Plegmatis</div>
+                        <div class="text-sm text-blue-600">Damai</div>
+                    </div>
+                    <div class="bg-purple-50 p-4 rounded-lg">
+                        <div class="text-2xl mb-2">🎨</div>
+                        <div class="font-semibold text-purple-700">Melankolis</div>
+                        <div class="text-sm text-purple-600">Sempurna</div>
+                    </div>
+                </div>
+            </div>
+            <button onclick="startTest()" class="bg-gradient-to-r from-purple-600 to-blue-600 text-white px-8 py-4 rounded-full text-lg font-semibold hover:from-purple-700 hover:to-blue-700 transform hover:scale-105 transition-all duration-200">
+                Mulai Tes Sekarang
+            </button>
+        </div>
+
+        <!-- Test Screen -->
+        <div id="testScreen" class="hidden">
+            <!-- Progress Bar -->
+            <div class="bg-white/20 rounded-full h-3 mb-6">
+                <div id="progressBar" class="bg-white h-3 rounded-full progress-bar" style="width: 2%"></div>
+            </div>
+            <div class="text-white text-center mb-6">
+                <span id="questionNumber">1</span> dari 50 pertanyaan
+            </div>
+
+            <!-- Question Card -->
+            <div class="bg-white rounded-2xl card-shadow p-8 fade-in">
+                <div class="mb-6">
+                    <h3 id="questionText" class="text-xl font-semibold text-gray-800 mb-6"></h3>
+                    <div class="space-y-3">
+                        <button onclick="selectAnswer(4)" class="answer-btn w-full p-4 text-left rounded-lg border-2 border-gray-200 hover:border-green-400 hover:bg-green-50 transition-all duration-200">
+                            <span class="font-medium">Sangat Setuju</span>
+                        </button>
+                        <button onclick="selectAnswer(3)" class="answer-btn w-full p-4 text-left rounded-lg border-2 border-gray-200 hover:border-blue-400 hover:bg-blue-50 transition-all duration-200">
+                            <span class="font-medium">Setuju</span>
+                        </button>
+                        <button onclick="selectAnswer(2)" class="answer-btn w-full p-4 text-left rounded-lg border-2 border-gray-200 hover:border-yellow-400 hover:bg-yellow-50 transition-all duration-200">
+                            <span class="font-medium">Tidak Setuju</span>
+                        </button>
+                        <button onclick="selectAnswer(1)" class="answer-btn w-full p-4 text-left rounded-lg border-2 border-gray-200 hover:border-red-400 hover:bg-red-50 transition-all duration-200">
+                            <span class="font-medium">Sangat Tidak Setuju</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Results Screen -->
+        <div id="resultsScreen" class="hidden">
+            <div class="bg-white rounded-2xl card-shadow p-8 fade-in">
+                <div class="text-center mb-8">
+                    <div id="resultIcon" class="text-8xl mb-4"></div>
+                    <h2 class="text-3xl font-bold text-gray-800 mb-2">Hasil Tes Kepribadian Anda</h2>
+                    <div id="temperamentType" class="text-2xl font-semibold mb-4"></div>
+                    <div id="temperamentSubtitle" class="text-lg text-gray-600 mb-6"></div>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-6 mb-8">
+                    <div class="bg-gray-50 rounded-xl p-6">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+                            <span class="mr-2">📝</span> Deskripsi
+                        </h3>
+                        <p id="description" class="text-gray-700 leading-relaxed"></p>
+                    </div>
+
+                    <div class="bg-green-50 rounded-xl p-6">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+                            <span class="mr-2">⭐</span> Kelebihan
+                        </h3>
+                        <ul id="strengths" class="text-gray-700 space-y-2"></ul>
+                    </div>
+
+                    <div class="bg-orange-50 rounded-xl p-6">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+                            <span class="mr-2">⚠️</span> Kelemahan
+                        </h3>
+                        <ul id="weaknesses" class="text-gray-700 space-y-2"></ul>
+                    </div>
+
+                    <div class="bg-blue-50 rounded-xl p-6">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+                            <span class="mr-2">🚀</span> Saran Sukses
+                        </h3>
+                        <ul id="suggestions" class="text-gray-700 space-y-2"></ul>
+                    </div>
+                </div>
+
+                <div class="text-center space-y-4">
+                    <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                        <button onclick="shareToWhatsApp()" class="bg-green-500 text-white px-8 py-3 rounded-full font-semibold hover:bg-green-600 transform hover:scale-105 transition-all duration-200 flex items-center justify-center">
+                            <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893A11.821 11.821 0 0020.885 3.488"/>
+                            </svg>
+                            Bagikan ke WhatsApp
+                        </button>
+                        <button onclick="restartTest()" class="bg-gradient-to-r from-purple-600 to-blue-600 text-white px-8 py-3 rounded-full font-semibold hover:from-purple-700 hover:to-blue-700 transform hover:scale-105 transition-all duration-200">
+                            Ulangi Tes
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            { text: "Saya suka mengambil kendali dalam situasi kelompok", type: "koleris" },
+            { text: "Saya mudah bergaul dan membuat teman baru", type: "sanguinis" },
+            { text: "Saya lebih suka menghindari konflik", type: "plegmatis" },
+            { text: "Saya sangat memperhatikan detail dan kualitas", type: "melankolis" },
+            { text: "Saya tidak sabar dengan orang yang lambat", type: "koleris" },
+            { text: "Saya suka menjadi pusat perhatian", type: "sanguinis" },
+            { text: "Saya jarang menunjukkan emosi secara berlebihan", type: "plegmatis" },
+            { text: "Saya sering merasa sedih tanpa alasan yang jelas", type: "melankolis" },
+            { text: "Saya suka memberikan perintah kepada orang lain", type: "koleris" },
+            { text: "Saya optimis tentang masa depan", type: "sanguinis" },
+            { text: "Saya mudah menerima keputusan orang lain", type: "plegmatis" },
+            { text: "Saya perfeksionis dalam pekerjaan", type: "melankolis" },
+            { text: "Saya berani mengambil risiko besar", type: "koleris" },
+            { text: "Saya suka bercerita dan menghibur orang", type: "sanguinis" },
+            { text: "Saya tidak suka perubahan mendadak", type: "plegmatis" },
+            { text: "Saya sering mengkritik diri sendiri", type: "melankolis" },
+            { text: "Saya kompetitif dan ingin menang", type: "koleris" },
+            { text: "Saya mudah melupakan masalah", type: "sanguinis" },
+            { text: "Saya lebih suka rutinitas yang stabil", type: "plegmatis" },
+            { text: "Saya sensitif terhadap kritik", type: "melankolis" },
+            { text: "Saya cepat membuat keputusan", type: "koleris" },
+            { text: "Saya spontan dan impulsif", type: "sanguinis" },
+            { text: "Saya pendengar yang baik", type: "plegmatis" },
+            { text: "Saya suka menganalisis sebelum bertindak", type: "melankolis" },
+            { text: "Saya tidak takut konfrontasi", type: "koleris" },
+            { text: "Saya mudah bersemangat dengan hal baru", type: "sanguinis" },
+            { text: "Saya sabar dengan orang lain", type: "plegmatis" },
+            { text: "Saya suka kesendirian untuk berpikir", type: "melankolis" },
+            { text: "Saya fokus pada hasil akhir", type: "koleris" },
+            { text: "Saya suka bersosialisasi di pesta", type: "sanguinis" },
+            { text: "Saya menghindari mengambil keputusan sulit", type: "plegmatis" },
+            { text: "Saya mudah merasa tersinggung", type: "melankolis" },
+            { text: "Saya tidak suka membuang waktu", type: "koleris" },
+            { text: "Saya mudah memaafkan orang lain", type: "sanguinis" },
+            { text: "Saya lebih suka bekerja dalam tim", type: "plegmatis" },
+            { text: "Saya suka hal-hal yang terorganisir rapi", type: "melankolis" },
+            { text: "Saya tegas dalam menegakkan aturan", type: "koleris" },
+            { text: "Saya ekspresif dalam berbicara", type: "sanguinis" },
+            { text: "Saya mudah beradaptasi dengan situasi", type: "plegmatis" },
+            { text: "Saya sering merenungkan masa lalu", type: "melankolis" },
+            { text: "Saya suka tantangan yang sulit", type: "koleris" },
+            { text: "Saya mudah tertawa dan membuat orang tertawa", type: "sanguinis" },
+            { text: "Saya tidak suka menjadi sorotan", type: "plegmatis" },
+            { text: "Saya memiliki standar tinggi untuk diri sendiri", type: "melankolis" },
+            { text: "Saya langsung bertindak tanpa banyak pertimbangan", type: "koleris" },
+            { text: "Saya mudah berganti mood", type: "sanguinis" },
+            { text: "Saya konsisten dalam perilaku", type: "plegmatis" },
+            { text: "Saya suka seni dan keindahan", type: "melankolis" },
+            { text: "Saya tidak mudah menyerah", type: "koleris" },
+            { text: "Saya suka mencoba hal-hal baru", type: "sanguinis" }
+        ];
+
+        const temperamentData = {
+            koleris: {
+                name: "Koleris",
+                subtitle: "Pemimpin yang Kuat",
+                icon: "🔥",
+                color: "text-red-600",
+                description: "Anda adalah tipe pemimpin alami yang tegas, ambisius, dan berorientasi pada tujuan. Anda memiliki kemampuan untuk mengambil keputusan cepat dan memimpin orang lain dengan percaya diri.",
+                strengths: [
+                    "Pemimpin alami yang kuat",
+                    "Berani mengambil keputusan sulit",
+                    "Sangat termotivasi dan ambisius",
+                    "Efisien dan produktif",
+                    "Tidak mudah menyerah"
+                ],
+                weaknesses: [
+                    "Terkadang terlalu dominan",
+                    "Kurang sabar dengan orang lain",
+                    "Bisa terlihat arogan",
+                    "Sulit menerima kritik",
+                    "Terlalu fokus pada hasil"
+                ],
+                suggestions: [
+                    "Latih kesabaran dan empati",
+                    "Dengarkan pendapat orang lain",
+                    "Delegasikan tugas dengan baik",
+                    "Kontrol emosi saat marah",
+                    "Hargai proses, bukan hanya hasil"
+                ]
+            },
+            sanguinis: {
+                name: "Sanguinis",
+                subtitle: "Pribadi yang Populer",
+                icon: "☀️",
+                color: "text-yellow-600",
+                description: "Anda adalah tipe yang ceria, optimis, dan mudah bergaul. Anda memiliki kemampuan alami untuk menghibur dan menginspirasi orang lain dengan energi positif Anda.",
+                strengths: [
+                    "Mudah bergaul dan ramah",
+                    "Optimis dan ceria",
+                    "Kreatif dan inovatif",
+                    "Komunikator yang baik",
+                    "Mudah beradaptasi"
+                ],
+                weaknesses: [
+                    "Mudah teralihkan perhatian",
+                    "Kurang konsisten",
+                    "Terlalu impulsif",
+                    "Sulit menyelesaikan tugas",
+                    "Terkadang tidak realistis"
+                ],
+                suggestions: [
+                    "Buat jadwal dan patuhi komitmen",
+                    "Fokus pada satu tugas sampai selesai",
+                    "Pikirkan konsekuensi sebelum bertindak",
+                    "Kembangkan disiplin diri",
+                    "Tetapkan tujuan yang realistis"
+                ]
+            },
+            plegmatis: {
+                name: "Plegmatis",
+                subtitle: "Pembawa Kedamaian",
+                icon: "🌊",
+                color: "text-blue-600",
+                description: "Anda adalah tipe yang tenang, sabar, dan mudah bergaul. Anda memiliki kemampuan untuk menjaga keharmonisan dan menjadi penengah yang baik dalam konflik.",
+                strengths: [
+                    "Sabar dan tenang",
+                    "Pendengar yang baik",
+                    "Mudah bekerja sama",
+                    "Stabil dan dapat diandalkan",
+                    "Tidak mudah marah"
+                ],
+                weaknesses: [
+                    "Kurang inisiatif",
+                    "Menghindari konflik",
+                    "Sulit membuat keputusan",
+                    "Terlalu pasif",
+                    "Kurang motivasi"
+                ],
+                suggestions: [
+                    "Berani mengambil inisiatif",
+                    "Tetapkan tujuan personal",
+                    "Latih kemampuan leadership",
+                    "Jangan takut menghadapi konflik",
+                    "Kembangkan rasa percaya diri"
+                ]
+            },
+            melankolis: {
+                name: "Melankolis",
+                subtitle: "Pencari Kesempurnaan",
+                icon: "🎨",
+                color: "text-purple-600",
+                description: "Anda adalah tipe yang analitis, detail, dan perfeksionis. Anda memiliki kemampuan untuk melihat hal-hal yang terlewat oleh orang lain dan menghasilkan karya berkualitas tinggi.",
+                strengths: [
+                    "Sangat detail dan teliti",
+                    "Analitis dan mendalam",
+                    "Kreatif dan artistik",
+                    "Loyal dan setia",
+                    "Standar kualitas tinggi"
+                ],
+                weaknesses: [
+                    "Terlalu perfeksionis",
+                    "Mudah pesimis",
+                    "Sensitif terhadap kritik",
+                    "Sulit memaafkan",
+                    "Cenderung menyendiri"
+                ],
+                suggestions: [
+                    "Terima bahwa tidak ada yang sempurna",
+                    "Fokus pada hal positif",
+                    "Belajar menerima kritik konstruktif",
+                    "Kembangkan hubungan sosial",
+                    "Rayakan pencapaian kecil"
+                ]
+            }
+        };
+
+        let currentQuestion = 0;
+        let scores = { koleris: 0, sanguinis: 0, plegmatis: 0, melankolis: 0 };
+
+        function startTest() {
+            document.getElementById('welcomeScreen').classList.add('hidden');
+            document.getElementById('testScreen').classList.remove('hidden');
+            showQuestion();
+        }
+
+        function showQuestion() {
+            const question = questions[currentQuestion];
+            document.getElementById('questionText').textContent = question.text;
+            document.getElementById('questionNumber').textContent = currentQuestion + 1;
+            
+            const progress = ((currentQuestion + 1) / questions.length) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+        }
+
+        function selectAnswer(score) {
+            const questionType = questions[currentQuestion].type;
+            scores[questionType] += score;
+            
+            currentQuestion++;
+            
+            if (currentQuestion < questions.length) {
+                showQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function showResults() {
+            document.getElementById('testScreen').classList.add('hidden');
+            document.getElementById('resultsScreen').classList.remove('hidden');
+            
+            // Find dominant temperament
+            let maxScore = 0;
+            let dominantType = '';
+            
+            for (let type in scores) {
+                if (scores[type] > maxScore) {
+                    maxScore = scores[type];
+                    dominantType = type;
+                }
+            }
+            
+            const data = temperamentData[dominantType];
+            
+            document.getElementById('resultIcon').textContent = data.icon;
+            document.getElementById('temperamentType').textContent = data.name;
+            document.getElementById('temperamentType').className = `text-2xl font-semibold mb-4 ${data.color}`;
+            document.getElementById('temperamentSubtitle').textContent = data.subtitle;
+            document.getElementById('description').textContent = data.description;
+            
+            // Populate strengths
+            const strengthsList = document.getElementById('strengths');
+            strengthsList.innerHTML = '';
+            data.strengths.forEach(strength => {
+                const li = document.createElement('li');
+                li.innerHTML = `<span class="text-green-600">•</span> ${strength}`;
+                strengthsList.appendChild(li);
+            });
+            
+            // Populate weaknesses
+            const weaknessesList = document.getElementById('weaknesses');
+            weaknessesList.innerHTML = '';
+            data.weaknesses.forEach(weakness => {
+                const li = document.createElement('li');
+                li.innerHTML = `<span class="text-orange-600">•</span> ${weakness}`;
+                weaknessesList.appendChild(li);
+            });
+            
+            // Populate suggestions
+            const suggestionsList = document.getElementById('suggestions');
+            suggestionsList.innerHTML = '';
+            data.suggestions.forEach(suggestion => {
+                const li = document.createElement('li');
+                li.innerHTML = `<span class="text-blue-600">•</span> ${suggestion}`;
+                suggestionsList.appendChild(li);
+            });
+        }
+
+        function shareToWhatsApp() {
+            // Find dominant temperament
+            let maxScore = 0;
+            let dominantType = '';
+            
+            for (let type in scores) {
+                if (scores[type] > maxScore) {
+                    maxScore = scores[type];
+                    dominantType = type;
+                }
+            }
+            
+            const data = temperamentData[dominantType];
+            
+            // Create share message
+            const message = `🧠 *Hasil Tes Kepribadian Temperamen*
+
+${data.icon} *${data.name}*
+_${data.subtitle}_
+
+📝 *Deskripsi:*
+${data.description}
+
+---
+Ikuti tes kepribadian ini untuk mengetahui tipe temperamen Anda!`;
+
+            // Encode message for URL
+            const encodedMessage = encodeURIComponent(message);
+            
+            // Create WhatsApp share URL
+            const whatsappUrl = `https://wa.me/?text=${encodedMessage}`;
+            
+            // Open WhatsApp
+            window.open(whatsappUrl, '_blank');
+        }
+
+        function restartTest() {
+            currentQuestion = 0;
+            scores = { koleris: 0, sanguinis: 0, plegmatis: 0, melankolis: 0 };
+            
+            document.getElementById('resultsScreen').classList.add('hidden');
+            document.getElementById('welcomeScreen').classList.remove('hidden');
+        }
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97cd272ea031fd25',t:'MTc1NzQ4ODcyNC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
